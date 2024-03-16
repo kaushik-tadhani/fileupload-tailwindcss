@@ -20,27 +20,35 @@
         </button>
     </div>
 
-    <div class="relative hidden transition duration-0 visible:duration-150 z-10" aria-labelledby="modal-title" role="dialog" aria-modal="false" id="modal">
-        
+    <div class="relative hidden transition duration-0 visible:duration-150 z-10" aria-labelledby="modal-title"
+        role="dialog" aria-modal="false" id="modal">
+
         <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"></div>
 
         <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
             <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                <div class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                <div
+                    class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
                     <div class="bg-gray-50 px-4 py-3 sm:flex sm:px-6">
                         <div class="sm:flex sm:items-start">
                             <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                <h2 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Upload Image</h2>
+                                <h2 class="text-base font-semibold leading-6 text-gray-900" id="modal-title">Upload
+                                    Image</h2>
                             </div>
                         </div>
                     </div>
                     <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                <div class="mt-2">
-                                    <p class="text-sm text-gray-500">Are you sure you want to deactivate your account?
-                                        All of your data will be permanently removed. This action cannot be undone.</p>
-                                </div>
+                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                            <div class="mt-2">
+                                <form
+                                    ondragover="handleDragOver(event)" ondrop="handleDrop(event)"
+                                    class="bg-gray-50 p-4 backdrop:rounded-lg min-h-[10rem] text-center flex flex-col items-center justify-center border-dashed border-2 border-blue-200">
+                                    <input type="file" class="hidden" onchange="handleChange(event)" multiple />
+                                    <p class="text-gray-500">
+                                        Drag and drop files here, or <button
+                                            class="text-blue-600 underline cursor-pointer" type="button">browse</button>
+                                    </p>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -57,21 +65,35 @@
     <script>
         let modal = document.getElementById('modal');
         let btn = document.getElementById('open-btn');
-        let button = document.getElementById('ok-btn');
 
         btn.onclick = function () {
             modal.style.display = 'block';
         };
 
-        button.onclick = function () {
-            modal.style.display = 'none';
+        const handleDragOver = (e) => {
+            e.preventDefault();
+            e.target.style.borderColor = "rgba(164, 37, 228)";
         };
 
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
+        const handleDragLeave = () => {
+            e.target.style.borderColor = "#c6c6c6";
+        };
+
+        const handleDrop = (e) => {
+            e.preventDefault();
+            e.target.style.borderColor = "#c6c6c6";
+            handleChange(e);
+        };
+
+        const handleChange = (e) => {
+            const files = e.target.files;
+            // Do something with the files
+        };
+
+        const openFileExplorer = () => {
+            const input = document.querySelector("input[type='file']");
+            input.click();
+        };
     </script>
 </body>
 

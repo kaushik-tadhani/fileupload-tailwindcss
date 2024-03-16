@@ -7,6 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>File Upload</title>
     <link href="./output.css" rel="stylesheet">
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css"
+    />
 </head>
 
 <body>
@@ -108,6 +112,10 @@
                         img.classList[0] = "h-24";
                         const preview = document.querySelector(".preview");
                         preview.appendChild(img);
+                        const cropper = new Cropper(img, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                        });
                     };
                     reader.readAsDataURL(file);
                 }
@@ -119,6 +127,9 @@
             input.click();
         };
     </script>
+     <script
+     src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"
+   ></script>
 </body>
 
 </html>

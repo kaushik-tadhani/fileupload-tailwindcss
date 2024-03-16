@@ -21,10 +21,7 @@
         </button>
     </div>
 
-    <div class="fixed hidden z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4"
-        aria-labelledby="modal-title" role="dialog" aria-modal="false" id="modal">
-
-
+    <div class="fixed hidden z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4" aria-labelledby="modal-title" role="dialog" aria-modal="false" id="modal">
         <div class="relative top-10 mx-auto shadow-xl rounded-md bg-white w-1/2">
             <div
                 class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all mx-auto">
@@ -74,7 +71,7 @@
                                                     </svg>
                                                 </button>
                                             </div>
-                                            <div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
+                                            <div class="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
                                                 role="menu" id="cropBoxDropdown" aria-orientation="vertical"
                                                 aria-labelledby="menu-button" tabindex="-1">
                                                 <div class="py-1" role="none">
@@ -91,7 +88,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <button id="crop"
+                                        <button id="btnCancelEdit"
                                             class="bg-red-500 hover:bg-red-700 text-white text-sm font-semibold py-1 px-2 rounded me-2">
                                             Cancel
                                         </button>
@@ -159,10 +156,9 @@
         const imageActionButtonContainer = document.getElementById("image-action-button-container");
         let isImageEditEnable = false;
         let initialImage
+        let lastUpdatedImage;
                         
         let cropper;
-        let history = [];
-        let currentIndex = 0;
         let currentCropperBoxWidth = 1024;
         let currentCropperBoxHeight = 300;
 
@@ -197,9 +193,16 @@
         });
 
         document.getElementById('crop').addEventListener('click', () => {
-            history.push(cropper.getCroppedCanvas().toDataURL());
             isImageEditEnable = false;
-            loadImageToCropper(cropper.getCroppedCanvas().toDataURL());
+            lastUpdatedImage = cropper.getCroppedCanvas().toDataURL();
+            loadImageToCropper(lastUpdatedImage);
+            imageEditButtonContainer.classList.remove("hidden");
+            imageActionButtonContainer.classList.add('hidden');
+        });
+
+        document.getElementById("btnCancelEdit").addEventListener("click", () => {
+            isImageEditEnable = false;
+            loadImageToCropper(lastUpdatedImage || initialImage);
             imageEditButtonContainer.classList.remove("hidden");
             imageActionButtonContainer.classList.add('hidden');
         });

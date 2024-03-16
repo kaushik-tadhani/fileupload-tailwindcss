@@ -40,16 +40,37 @@
                     <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                         <div class="mt-2">
                             <div class="flex flex-row justify-start mb-2 invisible" id="image-action-button-container">
-                                <button id="crop" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-2 rounded me-2">
-                                    Crop
-                                </button>
-                                <button id="undo" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-2 rounded me-2">
-                                    Undo
-                                </button>
-                                <button id="redo" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-2 rounded me-2">
-                                    Redo
-                                </button>
+                                <div>
+                                    <button id="crop" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-2 rounded me-2">
+                                        Crop
+                                    </button>
+                                    <button id="undo" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-2 rounded me-2">
+                                        Undo
+                                    </button>
+                                    <button id="redo" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-2 rounded me-2">
+                                        Redo
+                                    </button>
+                                </div>
+                                <div>
+                                    <div class="relative inline-block text-left">
+                                        <div>
+                                          <button type="button" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="cropBoxDropdownButton" aria-expanded="true" aria-haspopup="true">
+                                            <span>1024x300</span>
+                                            <svg class="-mr-1 h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                              <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                            </svg>
+                                          </button>
+                                        </div>
+                                        <div class="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" id="cropBoxDropdown" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                                          <div class="py-1" role="none">
+                                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm crop-box-dropdown-options" data-cropBoxWidth="1024" data-cropBoxHeight="300" role="menuitem" tabindex="-1">1024x300</a>
+                                            <a href="#" class="text-gray-700 block px-4 py-2 text-sm crop-box-dropdown-options" data-cropBoxWidth="400" data-cropBoxHeight="300" role="menuitem" tabindex="-1">400x300</a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                </div>
                             </div>
+                            
                             <form ondragover="handleDragOver(event)" ondrop="handleDrop(event)"
                                 class="bg-gray-50 p-4 backdrop:rounded-lg min-h-[10rem] text-center flex flex-col items-center justify-center border-dashed border-2 border-blue-200">
                                 <div id="file-upload-container">
@@ -102,8 +123,32 @@
         let uploadBtn = document.getElementById("btn-upload");
         let cropper;
         let history = [];
+        let currentCropperBoxWidth = 1024;
+        let currentCropperBoxHeight = 300;
 
-        var currentIndex = -1;
+        const cropBoxDropdownButton = document.querySelector('#cropBoxDropdownButton');
+        const cropBoxDropdown = document.querySelector('#cropBoxDropdown');
+        const cropBoxDropdownOptions = document.querySelectorAll('.crop-box-dropdown-options');
+
+        cropBoxDropdownButton.addEventListener('click', () => {
+            cropBoxDropdown.classList.toggle('hidden');
+        });
+
+        cropBoxDropdownOptions.forEach(function(options){
+            options.addEventListener("click", function(e) {
+                console.log(e);
+                currentCropperBoxWidth = e.target.dataset["cropboxwidth"];
+                currentCropperBoxHeight = e.target.dataset["cropboxheight"];
+                cropBoxDropdownButton.querySelector("span").innerHTML = e.target.innerHTML;
+                cropBoxDropdown.classList.toggle('hidden');
+
+                cropper.setAspectRatio(currentCropperBoxWidth / currentCropperBoxHeight);
+                cropper.setCropBoxData({ width: currentCropperBoxWidth, height: currentCropperBoxHeight });
+
+            });
+        });
+
+        var currentIndex = 0;
 
         document.getElementById('crop').addEventListener('click', function () {
             history.splice(currentIndex + 1);
@@ -204,13 +249,15 @@
             imgElement.src = imgSrc;
             imageContainer.appendChild(imgElement);
 
+            if (cropper) return;
             cropper = new Cropper(imgElement, {
-                aspectRatio: 1024 / 300,
-                viewMode: 1,
-                cropBoxMovable: false,
+                aspectRatio: currentCropperBoxWidth / currentCropperBoxHeight,
+                viewMode: 0,
+                cropBoxMovable: true,
                 cropBoxResizable: false,
+                dragMode: 'move',
                 built: function () {
-                    cropper.setCropBoxData({ width: 1024, height: 300 });
+                    cropper.setCropBoxData({ width: currentCropperBoxWidth, height: currentCropperBoxHeight });
                 }
             });
         }
